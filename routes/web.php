@@ -18,7 +18,16 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+
+    $user = User::create([
+        'name' => 'prince',
+        'email' => 'prince@email.com',
+        'password' => 'password'
+    ]);
+
+    dd($user);
+
+    //return view('welcome');
 });
 
 Route::get('/dashboard', function () {
