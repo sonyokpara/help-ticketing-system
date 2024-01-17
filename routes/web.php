@@ -19,15 +19,15 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
 
-    $user = User::create([
-        'name' => 'prince',
-        'email' => 'prince@email.com',
-        'password' => 'password'
-    ]);
+    // $user = User::create([
+    //     'name' => 'prince',
+    //     'email' => 'prince@email.com',
+    //     'password' => 'password'
+    // ]);
 
-    dd($user);
+    // dd($user);
 
-    //return view('welcome');
+    return view('welcome');
 });
 
 Route::get('/dashboard', function () {
@@ -40,6 +40,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     Route::patch('/profile/avatar', [AvatarController::class, 'update'])->name('update.avatar');
+    Route::post('/profile/avatar/ai', [AvatarController::class, 'generateAvatar'])->name('profile.avatar.ai');
 });
 
 require __DIR__.'/auth.php';
