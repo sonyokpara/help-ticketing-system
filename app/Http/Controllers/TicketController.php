@@ -3,8 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Ticket;
+use App\Models\User;
 use App\Http\Requests\StoreTicketRequest;
 use App\Http\Requests\UpdateTicketRequest;
+use App\Notifications\TicketUpdatedNotification;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
@@ -15,8 +18,10 @@ class TicketController extends Controller
      */
     public function index()
     {
-        // $tickets = Ticket::where('id', auth()->user()->id)->get();
-        $tickets = Ticket::all();
+
+        $user = Auth::user();
+        $tickets = $user->isAdmin? Ticket::latest()->get() : $user->tickets;
+
         return view('tickets.index', compact('tickets'));
     }
 
@@ -68,12 +73,13 @@ class TicketController extends Controller
      */
     public function update(UpdateTicketRequest $request, Ticket $ticket)
     {
-        $ticket->update([
-            'title' => $request->title, 
-            'description' => $request->description
-        ]);
+        $ticket->update($request->except('attachment'));
 
-        if($request->file('attachments')){
+        if($request->has('status')){
+            $ticket->user->notify(new TicketUpdatedNotification($ticket));
+        }
+
+        if($request->file('attachment')){
             
             //delete old attachment
             if($ticket->attachments){
@@ -100,7 +106,7 @@ class TicketController extends Controller
      * Save the uploaded resource to storage
      */
     protected function storeAttachment($request, $ticket){
-        $file = $request->file('attachments'); 
+        $file = $request->file('attachment'); 
         $ext = $file->extension();
         $contents = file_get_contents($file);
         $filename = Str::random();
@@ -108,6 +114,6 @@ class TicketController extends Controller
 
         // save uploaded image
         Storage::disk('public')->put($path, $contents);
-        $ticket->update(['attachments' => $path]);
+        $ticket->update(['attachment' => $path]);
     }
 }

@@ -23,11 +23,11 @@
                 <!-- Attachment -->
                 <div class="block mt-4">
                     @if($ticket->attachments)
-                        <a href="{{'/storage/'.$ticket->attachments}}" target="_blank">See Attachment</a>
+                        <a href="{{'/storage/'.$ticket->attachment}}" target="_blank">See Attachment</a>
                     @endif
-                    <x-input-label for="attachments" :value="__('Attachment (if any)')" />
-                    <x-file-input name="attachments" id="attachments"/>
-                    <x-input-error :messages="$errors->get('attachments')" class="mt-2" />
+                    <x-input-label for="attachment" :value="__('Attachment (if any)')" />
+                    <x-file-input name="attachment" id="attachment"/>
+                    <x-input-error :messages="$errors->get('attachment')" class="mt-2" />
         
                 </div>
         
